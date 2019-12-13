@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.js-master/build/three.module.js';
 import {OrbitControls} from './vendor/three.js-master/examples/jsm/controls/OrbitControls.js';
-import {addTile} from "./loader.js";
+import {loadBottomTiles, loadMiddleTiles, loadTopTiles} from "./loader.js";
 
 const Scene = {
     vars: {
@@ -33,9 +33,7 @@ const Scene = {
         Scene.vars.mouse.y = -(event.clientY / Scene.vars.renderer.domElement.clientHeight) * 2 + 1;
         Scene.vars.raycaster.setFromCamera(Scene.vars.mouse, Scene.vars.camera);
         let intersects = Scene.vars.raycaster.intersectObjects(Scene.vars.tiles);
-        intersects.forEach(({object}) => {
-            object.callback();
-        });
+        if (intersects.length > 0) intersects[0].object.callback();
     },
     init: () => {
         let vars = Scene.vars;
@@ -64,7 +62,7 @@ const Scene = {
 
         vars.camera = new THREE.PerspectiveCamera(45, window.innerWidth /
             window.innerHeight, 1, 2000);
-        vars.camera.position.set(0, 20, 50);
+        vars.camera.position.set(0, 30, 45);
 
         let rightSpot = new THREE.DirectionalLight(0xFFFFFF, 0.8);
         rightSpot.position.set(50, 50, 50);
@@ -89,7 +87,7 @@ const Scene = {
         leftSpot.shadow.mapSize.height = 2048;
         vars.scene.add(leftSpot);
 
-        Scene.vars.plateau = new THREE.Mesh(new THREE.PlaneBufferGeometry(200, 200, 10), new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
+        Scene.vars.plateau = new THREE.Mesh(new THREE.PlaneBufferGeometry(200, 200, 10), new THREE.MeshBasicMaterial({color: 0xcccccc}));
         Scene.vars.plateau.receiveShadow = false;
         Scene.vars.plateau.rotation.x = -Math.PI / 2;
         Scene.vars.scene.add(Scene.vars.plateau);
@@ -102,8 +100,8 @@ const Scene = {
         window.addEventListener('resize', Scene.onWindowResize, false);
         window.addEventListener('mousedown', Scene.onMouseClick, false);
         vars.controls = new OrbitControls(vars.camera, vars.renderer.domElement);
-        vars.controls.maxDistance = 100;
-        vars.controls.minDistance = 10;
+        vars.controls.maxDistance = 80;
+        vars.controls.minDistance = 40;
         vars.controls.minPolarAngle = Math.PI / 4;
         vars.controls.maxPolarAngle = Math.PI / 2 - Math.PI / 24;
         vars.controls.minAzimuthAngle = -Math.PI / 4;
@@ -112,18 +110,10 @@ const Scene = {
         Scene.load();
     },
     load: () => {
-        addTile(0x00ff00, -15, 0, 0, Scene.vars.scene, 'do', Scene.vars.camera, Scene.vars.tiles).then(() => {
-            addTile(0x00ffff, -10, 0, 0, Scene.vars.scene, 're', Scene.vars.camera, Scene.vars.tiles).then(() => {
-                addTile(0xffff00, -5, 0, 0, Scene.vars.scene, 'mi', Scene.vars.camera, Scene.vars.tiles).then(() => {
-                    addTile(0x00faff, 0, 0, 0, Scene.vars.scene, 'fa', Scene.vars.camera, Scene.vars.tiles).then(() => {
-                        addTile(0x000000, 5, 0, 0, Scene.vars.scene, 'sol', Scene.vars.camera, Scene.vars.tiles).then(() => {
-                            addTile(0x00aa00, 10, 0, 0, Scene.vars.scene, 'la', Scene.vars.camera, Scene.vars.tiles).then(() => {
-                                addTile(0x00f000, 15, 0, 0, Scene.vars.scene, 'si', Scene.vars.camera, Scene.vars.tiles).then(() => {
-                                    Scene.finishLoading();
-                                });
-                            });
-                        });
-                    });
+        loadTopTiles(Scene).then(() => {
+            loadBottomTiles(Scene).then(() => {
+                loadMiddleTiles(Scene).then(() => {
+                    Scene.finishLoading();
                 });
             });
         });
