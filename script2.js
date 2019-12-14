@@ -62,7 +62,7 @@ const Scene = {
 
         vars.camera = new THREE.PerspectiveCamera(45, window.innerWidth /
             window.innerHeight, 1, 2000);
-        vars.camera.position.set(0, 30, 45);
+        vars.camera.position.set(0, 40, 40);
 
         let rightSpot = new THREE.DirectionalLight(0xFFFFFF, 0.8);
         rightSpot.position.set(50, 50, 50);
