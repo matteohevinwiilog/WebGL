@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.js-master/build/three.module.js';
 import {OrbitControls} from './vendor/three.js-master/examples/jsm/controls/OrbitControls.js';
-import {loadBottomTiles, loadMiddleTiles, loadTopTiles} from "./loader.js";
+import {loadBottomTiles, loadMiddleTiles, loadTopTiles, loadPlayButton} from "./loader.js";
 
 const Scene = {
     vars: {
@@ -13,7 +13,7 @@ const Scene = {
         controls: null,
         mouse: new THREE.Vector2(),
         raycaster: new THREE.Raycaster(),
-        tiles: [],
+        clickable: [],
     },
     animate: () => {
         Scene.render();
@@ -32,7 +32,7 @@ const Scene = {
         Scene.vars.mouse.x = (event.clientX / Scene.vars.renderer.domElement.clientWidth) * 2 - 1;
         Scene.vars.mouse.y = -(event.clientY / Scene.vars.renderer.domElement.clientHeight) * 2 + 1;
         Scene.vars.raycaster.setFromCamera(Scene.vars.mouse, Scene.vars.camera);
-        let intersects = Scene.vars.raycaster.intersectObjects(Scene.vars.tiles);
+        let intersects = Scene.vars.raycaster.intersectObjects(Scene.vars.clickable);
         if (intersects.length > 0) intersects[0].object.callback();
     },
     init: () => {
@@ -62,7 +62,7 @@ const Scene = {
 
         vars.camera = new THREE.PerspectiveCamera(45, window.innerWidth /
             window.innerHeight, 1, 2000);
-        vars.camera.position.set(0, 40, 40);
+        vars.camera.position.set(0, 40, 60);
 
         let rightSpot = new THREE.DirectionalLight(0xFFFFFF, 0.8);
         rightSpot.position.set(50, 50, 50);
@@ -113,7 +113,9 @@ const Scene = {
         loadTopTiles(Scene).then(() => {
             loadBottomTiles(Scene).then(() => {
                 loadMiddleTiles(Scene).then(() => {
-                    Scene.finishLoading();
+                    loadPlayButton(Scene).then(() => {
+                        Scene.finishLoading();
+                    });
                 });
             });
         });
@@ -121,6 +123,7 @@ const Scene = {
     finishLoading: () => {
         Scene.animate();
         document.getElementById('loading').remove();
+        Scene.vars.controls.enabled = false;
     }
 };
 
