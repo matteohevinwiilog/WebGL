@@ -7,3 +7,5 @@ Le bouton play vous permettra aussi de visionner une démonstration du piano.
 En éspérant que cela vous aura plu! 
 
 Matteo Hevin.
+
+PS : le vendor n'est pas inclu, il vous faudra le récupérer vous-même.
