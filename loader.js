@@ -1,9 +1,9 @@
 import * as THREE from './vendor/three.js-master/build/three.module.js';
 
-export function addTile(color, px, py, pz, scene, name, camera, tiles, width = 3, depth = 15, height = 2) {
+export function addTile(color, px, py, pz, scene, name, width = 3, depth = 15, height = 2) {
     return new Promise((resolve) => {
         let listener = new THREE.AudioListener();
-        camera.add(listener);
+        scene.vars.camera.add(listener);
         let sound = new THREE.Audio(listener);
         let audioLoader = new THREE.AudioLoader();
         audioLoader.load('res/' + name + '.mp3', function (buffer) {
@@ -23,9 +23,9 @@ export function addTile(color, px, py, pz, scene, name, camera, tiles, width = 3
             line.position.y = py;
             line.position.z = pz;
             cube.name = name;
-            cube.callback = function (length = null) {
+            cube.callback = function (length = null, force = false) {
                 return new Promise(resolve => {
-                    if (!sound.isPlaying) {
+                    if (!sound.isPlaying && (!scene.vars.isPlaying || force)) {
                         cube.position.y -= 0.8;
                         line.position.y -= 0.8;
                         sound.play();
@@ -38,9 +38,9 @@ export function addTile(color, px, py, pz, scene, name, camera, tiles, width = 3
                     }
                 });
             };
-            scene.add(cube);
-            scene.add(line);
-            tiles.push(cube);
+            scene.vars.scene.add(cube);
+            scene.vars.scene.add(line);
+            scene.vars.clickable.push(cube);
             resolve();
         });
     });
@@ -48,23 +48,23 @@ export function addTile(color, px, py, pz, scene, name, camera, tiles, width = 3
 
 export function loadTopTiles(Scene) {
     return new Promise((resolve) => {
-        addTile(0xffffff, -30, 0, 0, Scene.vars.scene, 'note1s', Scene.vars.camera, Scene.vars.clickable).then(() => {
-            addTile(0xffffff, -27, 0, 0, Scene.vars.scene, 'note3s', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                addTile(0xffffff, -24, 0, 0, Scene.vars.scene, 'note5s', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                    addTile(0xffffff, -21, 0, 0, Scene.vars.scene, 'note6s', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                        addTile(0xffffff, -18, 0, 0, Scene.vars.scene, 'note8s', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                            addTile(0xffffff, -15, 0, 0, Scene.vars.scene, 'note10s', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                addTile(0xffffff, -12, 0, 0, Scene.vars.scene, 'note12s', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                    addTile(0xffffff, -9, 0, 0, Scene.vars.scene, 'note1o', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                        addTile(0xffffff, -6, 0, 0, Scene.vars.scene, 'note3o', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                            addTile(0xffffff, -3, 0, 0, Scene.vars.scene, 'note5o', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                                addTile(0x000000, -28.5, 1.5, -2, Scene.vars.scene, 'note2s', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                    addTile(0x000000, -25.5, 1.5, -2, Scene.vars.scene, 'note4s', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                        addTile(0x000000, -19.5, 1.5, -2, Scene.vars.scene, 'note7s', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                            addTile(0x000000, -16.5, 1.5, -2, Scene.vars.scene, 'note9s', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                                addTile(0x000000, -13.5, 1.5, -2, Scene.vars.scene, 'note11s', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                                    addTile(0x000000, -7.5, 1.5, -2, Scene.vars.scene, 'note2o', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                                        addTile(0x000000, -4.5, 1.5, -2, Scene.vars.scene, 'note4o', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
+        addTile(0xffffff, -30, 0, 0, Scene, 'note1s').then(() => {
+            addTile(0xffffff, -27, 0, 0, Scene, 'note3s').then(() => {
+                addTile(0xffffff, -24, 0, 0, Scene, 'note5s').then(() => {
+                    addTile(0xffffff, -21, 0, 0, Scene, 'note6s').then(() => {
+                        addTile(0xffffff, -18, 0, 0, Scene, 'note8s').then(() => {
+                            addTile(0xffffff, -15, 0, 0, Scene, 'note10s').then(() => {
+                                addTile(0xffffff, -12, 0, 0, Scene, 'note12s').then(() => {
+                                    addTile(0xffffff, -9, 0, 0, Scene, 'note1o').then(() => {
+                                        addTile(0xffffff, -6, 0, 0, Scene, 'note3o').then(() => {
+                                            addTile(0xffffff, -3, 0, 0, Scene, 'note5o').then(() => {
+                                                addTile(0x000000, -28.5, 1.5, -2, Scene, 'note2s', 2, 11, 1).then(() => {
+                                                    addTile(0x000000, -25.5, 1.5, -2, Scene, 'note4s', 2, 11, 1).then(() => {
+                                                        addTile(0x000000, -19.5, 1.5, -2, Scene, 'note7s', 2, 11, 1).then(() => {
+                                                            addTile(0x000000, -16.5, 1.5, -2, Scene, 'note9s', 2, 11, 1).then(() => {
+                                                                addTile(0x000000, -13.5, 1.5, -2, Scene, 'note11s', 2, 11, 1).then(() => {
+                                                                    addTile(0x000000, -7.5, 1.5, -2, Scene, 'note2o', 2, 11, 1).then(() => {
+                                                                        addTile(0x000000, -4.5, 1.5, -2, Scene, 'note4o', 2, 11, 1).then(() => {
                                                                             resolve();
                                                                         });
                                                                     });
@@ -88,23 +88,23 @@ export function loadTopTiles(Scene) {
 
 export function loadBottomTiles(Scene) {
     return new Promise((resolve) => {
-        addTile(0xffffff, 3, 0, 0, Scene.vars.scene, 'note8o', Scene.vars.camera, Scene.vars.clickable).then(() => {
-            addTile(0xffffff, 6, 0, 0, Scene.vars.scene, 'note10o', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                addTile(0xffffff, 9, 0, 0, Scene.vars.scene, 'note12o', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                    addTile(0xffffff, 12, 0, 0, Scene.vars.scene, 'note1t', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                        addTile(0xffffff, 15, 0, 0, Scene.vars.scene, 'note3t', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                            addTile(0xffffff, 18, 0, 0, Scene.vars.scene, 'note5t', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                addTile(0xffffff, 21, 0, 0, Scene.vars.scene, 'note6t', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                    addTile(0xffffff, 24, 0, 0, Scene.vars.scene, 'note8t', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                        addTile(0xffffff, 27, 0, 0, Scene.vars.scene, 'note10t', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                            addTile(0xffffff, 30, 0, 0, Scene.vars.scene, 'note12t', Scene.vars.camera, Scene.vars.clickable).then(() => {
-                                                addTile(0x000000, 4.5, 1.5, -2, Scene.vars.scene, 'note9o', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                    addTile(0x000000, 7.5, 1.5, -2, Scene.vars.scene, 'note11o', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                        addTile(0x000000, 13.5, 1.5, -2, Scene.vars.scene, 'note2t', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                            addTile(0x000000, 16.5, 1.5, -2, Scene.vars.scene, 'note4t', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                                addTile(0x000000, 22.5, 1.5, -2, Scene.vars.scene, 'note7t', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                                    addTile(0x000000, 25.5, 1.5, -2, Scene.vars.scene, 'note9t', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
-                                                                        addTile(0x000000, 28.5, 1.5, -2, Scene.vars.scene, 'note11t', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
+        addTile(0xffffff, 3, 0, 0, Scene, 'note8o').then(() => {
+            addTile(0xffffff, 6, 0, 0, Scene, 'note10o').then(() => {
+                addTile(0xffffff, 9, 0, 0, Scene, 'note12o').then(() => {
+                    addTile(0xffffff, 12, 0, 0, Scene, 'note1t').then(() => {
+                        addTile(0xffffff, 15, 0, 0, Scene, 'note3t').then(() => {
+                            addTile(0xffffff, 18, 0, 0, Scene, 'note5t').then(() => {
+                                addTile(0xffffff, 21, 0, 0, Scene, 'note6t').then(() => {
+                                    addTile(0xffffff, 24, 0, 0, Scene, 'note8t').then(() => {
+                                        addTile(0xffffff, 27, 0, 0, Scene, 'note10t').then(() => {
+                                            addTile(0xffffff, 30, 0, 0, Scene, 'note12t').then(() => {
+                                                addTile(0x000000, 4.5, 1.5, -2, Scene, 'note9o', 2, 11, 1).then(() => {
+                                                    addTile(0x000000, 7.5, 1.5, -2, Scene, 'note11o', 2, 11, 1).then(() => {
+                                                        addTile(0x000000, 13.5, 1.5, -2, Scene, 'note2t', 2, 11, 1).then(() => {
+                                                            addTile(0x000000, 16.5, 1.5, -2, Scene, 'note4t', 2, 11, 1).then(() => {
+                                                                addTile(0x000000, 22.5, 1.5, -2, Scene, 'note7t', 2, 11, 1).then(() => {
+                                                                    addTile(0x000000, 25.5, 1.5, -2, Scene, 'note9t', 2, 11, 1).then(() => {
+                                                                        addTile(0x000000, 28.5, 1.5, -2, Scene, 'note11t', 2, 11, 1).then(() => {
                                                                             resolve();
                                                                         });
                                                                     });
@@ -128,8 +128,8 @@ export function loadBottomTiles(Scene) {
 
 export function loadMiddleTiles(Scene) {
     return new Promise((resolve) => {
-        addTile(0xffffff, 0, 0, 0, Scene.vars.scene, 'note6o', Scene.vars.camera, Scene.vars.clickable).then(() => {
-            addTile(0x000000, 1.5, 1.5, -2, Scene.vars.scene, 'note7o', Scene.vars.camera, Scene.vars.clickable, 2, 11, 1).then(() => {
+        addTile(0xffffff, 0, 0, 0, Scene, 'note6o').then(() => {
+            addTile(0x000000, 1.5, 1.5, -2, Scene, 'note7o', 2, 11, 1).then(() => {
                 resolve();
             });
         });
@@ -175,7 +175,7 @@ function playMelody(Scene) {
         ];
         asyncForEach(notesAndDuration, async (note, index) => {
             let noteToPlay = Scene.vars.scene.getObjectByName(Array.isArray(note) ? note[0] : note);
-            if (noteToPlay) await noteToPlay.callback(Array.isArray(note) ? note[1] : null);
+            if (noteToPlay) await noteToPlay.callback(Array.isArray(note) ? note[1] : null, true);
             else await pause();
             Scene.vars.isPlaying = !(index === notesAndDuration.length - 1);
         });
